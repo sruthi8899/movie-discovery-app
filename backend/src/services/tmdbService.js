@@ -21,7 +21,7 @@ function sleep(ms) {
  * Anything else (4xx like 404/401) is NOT retried — retrying a "not found"
  * or "bad api key" just wastes time and hides the real problem.
  */
-async function tmdbFetch(pathname, searchParams = {}, { retries = 2 } = {}) {
+async function tmdbFetch(pathname, searchParams = {}, { retries = 3 } = {}) {
   if (!config.tmdb.apiKey) {
     throw new UpstreamError(
       'Server is not configured with a TMDB_API_KEY. See backend/.env.example.',
@@ -39,7 +39,7 @@ async function tmdbFetch(pathname, searchParams = {}, { retries = 2 } = {}) {
   // eslint-disable-next-line no-constant-condition
   while (true) {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000);
+    const timeout = setTimeout(() => controller.abort(), 15000);
 
     try {
       const res = await fetch(url, { signal: controller.signal });
